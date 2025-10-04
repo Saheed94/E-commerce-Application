@@ -3,12 +3,15 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: false, // Allow inline scripts for our frontend
+}));
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
@@ -16,19 +19,17 @@ app.use(morgan('dev'));
 // In-memory database (simulating a real database)
 const payments = [];
 const products = [
-  { id: 1, name: 'Laptop', price: 999.99, stock: 10 },
-  { id: 2, name: 'Smartphone', price: 599.99, stock: 25 },
-  { id: 3, name: 'Headphones', price: 149.99, stock: 50 },
-  { id: 4, name: 'Keyboard', price: 79.99, stock: 30 },
-  { id: 5, name: 'Mouse', price: 49.99, stock: 40 }
+  { id: 1, name: 'Laptop', price: 999.99, stock: 10, image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400' },
+  { id: 2, name: 'Smartphone', price: 599.99, stock: 25, image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400' },
+  { id: 3, name: 'Headphones', price: 149.99, stock: 50, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400' },
+  { id: 4, name: 'Keyboard', price: 79.99, stock: 30, image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400' },
+  { id: 5, name: 'Mouse', price: 49.99, stock: 40, image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400' }
 ];
 
 // Payment processing simulator
 function processPayment(paymentData) {
-  // Simulate payment gateway delay
   return new Promise((resolve) => {
     setTimeout(() => {
-      // Simulate 95% success rate
       const success = Math.random() > 0.05;
       resolve({
         success,
@@ -62,7 +63,7 @@ function validatePayment(data) {
   return errors;
 }
 
-// Routes
+// API Routes (MUST come before static files!)
 
 // Health check
 app.get('/health', (req, res) => {
@@ -103,7 +104,6 @@ app.post('/api/payments', async (req, res) => {
   try {
     const { productId, quantity, cardNumber, cvv, expiryDate, email } = req.body;
     
-    // Find product
     const product = products.find(p => p.id === parseInt(productId));
     
     if (!product) {
@@ -113,7 +113,6 @@ app.post('/api/payments', async (req, res) => {
       });
     }
     
-    // Check stock
     if (product.stock < quantity) {
       return res.status(400).json({
         success: false,
@@ -121,10 +120,8 @@ app.post('/api/payments', async (req, res) => {
       });
     }
     
-    // Calculate amount
     const amount = product.price * quantity;
     
-    // Validate payment data
     const validationErrors = validatePayment({
       amount,
       cardNumber,
@@ -139,7 +136,6 @@ app.post('/api/payments', async (req, res) => {
       });
     }
     
-    // Process payment
     const paymentResult = await processPayment({
       amount,
       cardNumber,
@@ -154,10 +150,8 @@ app.post('/api/payments', async (req, res) => {
       });
     }
     
-    // Update stock
     product.stock -= quantity;
     
-    // Store payment record
     const payment = {
       id: payments.length + 1,
       transactionId: paymentResult.transactionId,
@@ -230,11 +224,9 @@ app.post('/api/payments/:transactionId/refund', (req, res) => {
     });
   }
   
-  // Update payment status
   payment.status = 'refunded';
   payment.refundedAt = new Date().toISOString();
   
-  // Restore stock
   const product = products.find(p => p.id === payment.productId);
   if (product) {
     product.stock += payment.quantity;
@@ -247,14 +239,15 @@ app.post('/api/payments/:transactionId/refund', (req, res) => {
   });
 });
 
-// Error handling middleware
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found'
-  });
+// Serve static frontend files (AFTER API routes!)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Serve index.html for the root route or any unmatched route (SPA support)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -266,9 +259,10 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 E-Commerce Payment API running on port ${PORT}`);
+  console.log(`📍 Frontend: http://localhost:${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
-  console.log(`📦 Products: http://localhost:${PORT}/api/products`);
-  console.log(`💳 Payments: http://localhost:${PORT}/api/payments`);
+  console.log(`📦 Products API: http://localhost:${PORT}/api/products`);
+  console.log(`💳 Payments API: http://localhost:${PORT}/api/payments`);
 });
 
 module.exports = app;
