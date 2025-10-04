@@ -19,8 +19,8 @@ app.use(morgan('dev'));
 // In-memory database (simulating a real database)
 const payments = [];
 const products = [
-  { id: 1, name: 'Laptop', price: 999.99, stock: 10, image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400' },
-  { id: 2, name: 'Smartphone', price: 599.99, stock: 25, image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400' },
+  { id: 1, name: 'Laptop', price: 899.99, stock: 10, image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400' },
+  { id: 2, name: 'Smartphone', price: 499.99, stock: 25, image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400' },
   { id: 3, name: 'Headphones', price: 149.99, stock: 50, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400' },
   { id: 4, name: 'Keyboard', price: 79.99, stock: 30, image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400' },
   { id: 5, name: 'Mouse', price: 49.99, stock: 40, image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400' }
