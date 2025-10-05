@@ -6,15 +6,34 @@
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Size](https://img.shields.io/badge/Docker%20Image-189MB-success)
 
-A Node.js/Express REST API showcasing enterprise-grade Docker containerization and optimization strategies.
+A full-stack, containerized e-commerce payment platform designed and deployed using modern DevOps best practices. The project combines an interactive frontend with a Node.js + Express REST API for handling product management and payment processing.
+The entire infrastructure is provisioned using Terraform (IaC) and automatically deployed to AWS EC2 through a GitHub Actions CI/CD pipeline that builds, pushes, and runs Docker images from Docker Hub.
+
+This project demonstrates:
+
+End-to-end automation — from code commit to live deployment
+
+Cloud infrastructure provisioning with reusable Terraform modules
+
+Secure, optimized Docker image builds
+
+Continuous integration and delivery workflows for scalable application releases
 
 ## 🎯 Project Highlights
 
-- **88% Docker image size reduction** (1.57GB → 189MB)
-- Multi-stage Docker builds for optimal production deployments
-- Production-ready payment processing system with validation
-- Security hardening with non-root containers
-- Comprehensive API documentation and testing scripts
+Full-Stack E-Commerce Web Application — Interactive frontend seamlessly integrated with a Node.js + Express payment API.
+
+88% Docker Image Size Reduction (1.57GB → 189MB) using multi-stage Docker builds for efficient production deployment.
+
+Automated AWS Infrastructure Provisioning with Terraform, including custom VPC, subnets, security groups, and EC2 instance.
+
+CI/CD Pipeline Integration — GitHub Actions workflow automatically builds Docker images, pushes to Docker Hub, and deploys updates to EC2 on commits to the development branch.
+
+Security Hardening — Non-root containers, restricted security group access, and least-privilege architecture design.
+
+Comprehensive API + Frontend Deployment — Backend APIs and UI served from the same EC2 instance, accessible via public endpoint.
+
+Automated Testing & Health Checks — Integrated API validation and application health endpoint monitoring.
 
 ---
 
