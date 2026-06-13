@@ -8,14 +8,22 @@
     "dev": "nodemon server.js",
     "test": "echo \"No tests yet\" && exit 0"
   },
-  "keywords": ["ecommerce", "payment", "api", "node"],
+  "keywords": [
+    "ecommerce",
+    "payment",
+    "api",
+    "node"
+  ],
   "author": "Saheed Ipaye",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "axios": "^1.17.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
     "helmet": "^7.1.0",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

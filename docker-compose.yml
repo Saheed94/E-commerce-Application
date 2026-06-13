@@ -1,0 +1,108 @@
+version: "3.9"
+
+services:
+  # =========================
+  # AUTH SERVICE
+  # =========================
+  auth-service:
+    build:
+      context: ./auth-service
+    container_name: auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      MONGO_URI: mongodb://mongodb:27017/ecommerce-auth
+      JWT_SECRET: supersecretjwt
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - ecommerce-network
+
+  # =========================
+  # ORDERS SERVICE
+  # =========================
+  orders-service:
+    build:
+      context: ./orders-service
+    container_name: orders-service
+    ports:
+      - "3102:3102"
+    environment:
+      PORT: 3102
+      NOTIFICATION_SERVICE_URL: http://notification-service:3003
+    depends_on:
+      - notification-service
+    networks:
+      - ecommerce-network
+
+  # =========================
+  # NOTIFICATION SERVICE
+  # =========================
+  notification-service:
+    build:
+      context: ./notification-service
+    container_name: notification-service
+    ports:
+      - "3003:3003"
+    environment:
+      PORT: 3003
+    networks:
+      - ecommerce-network
+
+  # =========================
+  # FRONTEND (REACT)
+  # =========================
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:3102
+    depends_on:
+      - orders-service
+    networks:
+      - ecommerce-network
+
+  # =========================
+  # MONGODB
+  # =========================
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - ecommerce-network
+
+  # =========================
+  # REDIS
+  # =========================
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - ecommerce-network
+
+# =========================
+# NETWORK
+# =========================
+networks:
+  ecommerce-network:
+    driver: bridge
+
+# =========================
+# PERSISTENT STORAGE
+# =========================
+volumes:
+  mongo_data:
