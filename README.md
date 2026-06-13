@@ -635,19 +635,6 @@ Planned enhancements:
 * Order Tracking
 * Event-Driven Messaging (SQS/SNS)
 
----
-
-# 📸 Screenshots
-
-Add screenshots here:
-
-```txt
-screenshots/
-├── homepage.png
-├── login.png
-├── register.png
-├── checkout.png
-```
 
 ---
 
